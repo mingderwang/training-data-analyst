@@ -14,14 +14,14 @@
 
 # TODO: Import the language module
 
-
+from google.cloud import language_v1
 
 # END TODO
 
 
 # TODO: Create the Language API client
 
-
+lang_client = language_v1.LanguageServiceClient()
 
 # END TODO
 
@@ -35,19 +35,21 @@ def analyze(text):
 
     # TODO: Create a Document object
 
-    
+    doc = language_v1.types.Document(content=text,
+                    type_='PLAIN_TEXT') 
 
     # END TODO
 
     # TODO: Analyze the sentiment
 
-    
+    sentiment = lang_client.analyze_sentiment(
+                    document=doc).document_sentiment 
 
     # END TODO
 
 
     # TODO: Return the sentiment score
 
-    
+    return sentiment.score 
 
     # END TODO

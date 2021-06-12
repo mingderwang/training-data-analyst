@@ -21,7 +21,7 @@ Import shared GCP helper modules
 """
 # TODO: Add pubsub to import list
 
-from quiz.gcp import datastore
+from quiz.gcp import datastore, pubsub
 
 # END TODO
 
@@ -73,7 +73,11 @@ Publish feedback
 def publish_feedback(feedback):
     # TODO: Publish the feedback using your pubsub module,
     # return the result
-    pass
     
+    result = pubsub.publish_feedback(feedback)
+    response = Response(json.dumps(
+                        result, indent=2, sort_keys=True))
+    response.headers['Content-Type'] = 'application/json'
+    return response
     
     # END TODO

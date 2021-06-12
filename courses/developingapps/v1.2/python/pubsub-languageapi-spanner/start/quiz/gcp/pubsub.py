@@ -18,7 +18,7 @@ project_id = os.getenv('GCLOUD_PROJECT')
 
 # TODO: Load the Cloud Pub/Sub module
 
-
+from google.cloud import pubsub_v1
 
 # END TODO
 
@@ -26,26 +26,26 @@ from flask import current_app
 
 # TODO: Create a Pub/Sub Publisher Client
 
-
+publisher = pubsub_v1.PublisherClient()
 
 # END TODO
 
 # TODO: Create Topic Object to reference feedback topic
 
-
+topic_path = publisher.topic_path(project_id, 'feedback')
 
 # END TODO
 
 # TODO: Create a Pub/Sub Subscriber Client
 
-
+sub_client = pubsub_v1.SubscriberClient()
 
 # END TODO
 
 # TODO: Create a Subscription object named
 # worker-subscription
 
-
+sub_path = sub_client.subscription_path(project_id, 'worker-subscription')
 
 # END TODO
 
@@ -60,7 +60,11 @@ def publish_feedback(feedback):
 
 # TODO: Publish the feedback object to the feedback topic
 
-    
+    payload = json.dumps(feedback, indent=2,
+                                      sort_keys=True)
+    data = payload.encode('utf-8')
+    future = publisher.publish(topic_path, data=data)
+    return future.result() 
 
 # END TODO
 
@@ -74,6 +78,8 @@ def pull_feedback(callback):
     # TODO: Subscriber to the worker-subscription,
     # invoking the callback
 
-    pass
+    sub_client.subscribe(sub_path, callback=callback)
 
     # END TODO
+
+

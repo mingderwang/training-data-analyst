@@ -16,7 +16,7 @@ import re
 
 # TODO: Import the spanner module
 
-
+from google.cloud import spanner
 
 # END TODO
 
@@ -26,20 +26,20 @@ Get spanner management objects
 
 # TODO: Create a spanner Client
 
-
+spanner_client = spanner.Client()
 
 # END TODO
 
 
 # TODO: Get a reference to the Cloud Spanner quiz-instance
 
-
+instance = spanner_client.instance('quiz-instance')
 
 # END TODO
 
 # TODO: Get a reference to the Cloud Spanner quiz-database
 
-
+database = instance.database('quiz-database')
 
 # END TODO
 
@@ -59,14 +59,17 @@ Persists feedback data into Spanner
 def save_feedback(data):
     # TODO: Create a batch object for database operations
 
-    
+    with database.batch() as batch: 
 
     # END TODO
 
         # TODO: Create a key for the record
         # from the email, quiz and timestamp
 
-        
+        feedback_id = '{}_{}_{}'.format(
+                    reverse_email(data['email']),
+                    data['quiz'],
+                    data['timestamp']) 
 
 
         # END TODO
@@ -75,7 +78,29 @@ def save_feedback(data):
         # into the feedback table
         # This needs the columns and values
 
-        
+        batch.insert(
+            table='feedback',
+            columns=(
+                'feedbackId',
+                'email',
+                'quiz',
+                'timestamp',
+                'rating',
+                'score',
+                'feedback'
+            ),
+            values=[
+                (
+                    feedback_id,
+                    data['email'],
+                    data['quiz'],
+                    data['timestamp'],
+                    data['rating'],
+                    data['score'],
+                    data['feedback']
+                )
+            ]
+        ) 
 
         # END TODO
 
